@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import serverless from 'serverless-http';
 
-let server: any;
+let serverPromise: Promise<any> | undefined;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,8 +15,17 @@ async function bootstrap() {
 }
 
 export default async function handler(req: any, res: any) {
-  if (!server) {
-    server = await bootstrap();
+  if (!serverPromise) {
+    serverPromise = bootstrap();
   }
-  return server(req, res);
+
+  try {
+    const server = await serverPromise;
+    return server(req, res);
+  } catch (error) {
+    serverPromise = undefined;
+    console.error('NestJS bootstrap failed:', error);
+    res.statusCode = 500;
+    return res.end('Application failed to start');
+  }
 }

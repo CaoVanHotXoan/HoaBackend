@@ -59,6 +59,24 @@ $ npm run test:cov
 
 ## Deployment
 
+### Deploy lên Vercel
+
+Project này chạy trên Vercel dưới dạng serverless function tại `api/index.ts`.
+
+1. Import repository vào Vercel.
+2. Đặt **Root Directory** là thư mục chứa `package.json` và `vercel.json` (`HoaBackend` nếu repository chứa cả frontend).
+3. Dùng Build Command `npm run build`. Để trống Output Directory.
+4. Thêm các biến môi trường cho Production trong **Settings > Environment Variables**:
+
+```text
+DATABASE_URL=postgresql://...
+JWT_SECRET=your-long-random-secret
+```
+
+Có thể dùng cấu hình PostgreSQL rời thay cho `DATABASE_URL`: `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_NAME`, `DB_PORT` và `DB_ENCRYPT=true` nếu nhà cung cấp yêu cầu SSL.
+
+Sau khi deploy, API dùng URL `https://<domain>.vercel.app/api`; Swagger dùng `https://<domain>.vercel.app/api/docs`. Không dùng `localhost` hoặc `127.0.0.1` cho database trên Vercel.
+
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
 
 If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:

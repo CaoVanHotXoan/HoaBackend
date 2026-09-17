@@ -88,6 +88,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   constructor(private configService: ConfigService) {}
 
   async onModuleInit() {
+    const connectionString = this.configService.get<string>('DATABASE_URL');
     const config: PoolConfig = {
       user: this.configService.get<string>('DB_USER') || 'postgres',
       password: this.configService.get<string>('DB_PASSWORD') || '',
@@ -98,6 +99,10 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       idleTimeoutMillis: 60000,
       connectionTimeoutMillis: 15000,
     };
+
+    if (connectionString) {
+      config.connectionString = connectionString;
+    }
 
     // Supabase requires SSL usually
     if (
